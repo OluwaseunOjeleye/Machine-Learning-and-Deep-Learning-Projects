@@ -54,6 +54,7 @@ class K_NearestNeighbor(object):
 
 ##End Of Training###################################################################################################################################
 
+
 ### Using Model: 
 ###import and instantiate the class
 ###			code: 	clf=K_NearestNeighborClassifier(K_Value)
