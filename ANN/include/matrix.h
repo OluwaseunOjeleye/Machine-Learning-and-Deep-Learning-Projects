@@ -5,8 +5,8 @@
 #include <vector>
 #include <math.h>
 
-#define R_MIN -0.01
-#define R_MAX 0.01
+#define R_MIN 0
+#define R_MAX 1
 
 #define ASSERT(condition, message){\
     if(!condition){\
@@ -44,6 +44,7 @@ class Matrix{
         Matrix operator^(const int value) const; //power scalar
 
         Matrix<T> Transpose();
+        Matrix<T> hadamard_Product(const Matrix &mat2)const;
         void print() const;
 
     private:
@@ -301,6 +302,20 @@ Matrix<T> Matrix<T>::Transpose(){
     for(int i=0; i<this->column; i++){
         for(int j=0; j<this->row; j++){
             Result.matrix[i][j]=this->matrix[j][i];
+        }
+    }
+    return Result;
+}
+
+//Hadamard Product Function
+template <typename T> 
+Matrix<T> Matrix<T>::hadamard_Product(const Matrix &mat2)const{
+    ASSERT(((this->row==mat2.row)&&(this->column==mat2.column)), "Cannot perform Hadmard Product on these two matrices");
+
+    Matrix Result(this->row, this->column);
+    for(int i=0; i<this->row; i++){
+        for(int j=0; j<this->column; j++){
+            Result.matrix[i][j]=this->matrix[i][j]*mat2.matrix[i][j];
         }
     }
     return Result;
