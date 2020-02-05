@@ -3,7 +3,7 @@
 #include "activations.h"
 #include "cost.h"
 #include <string.h>
-
+#include <time.h>
 
 //Neural Network with Stochastic Gradient Descent as Optimizer
 class NeuralNetwork{
@@ -13,6 +13,16 @@ class NeuralNetwork{
 
 		void Train(Matrix<double> X_train, Matrix<double> Y_train, double alpha, std::string h_Layer_Activation, std::string output_Layer_Activation);
 		Matrix<double> Predict(Matrix<double> X_test);
+
+		void printWeight(){
+			for(int i=0; i<this->no_of_hidden_layers; i++){
+				std::cout<<"Weight "<<i+1<<": "<<std::endl;
+				this->Weights[i].print();
+				std::cout<<"Bias "<<i+1<<": "<<std::endl;
+				this->Biases[i].print();
+
+			}
+		}
 
 	private:
 		void initialize_Parameters();
@@ -39,10 +49,15 @@ class NeuralNetwork{
 		int no_of_samples;
 		int no_of_features;
 
+		std::string hidden_layers_Activation; //Activation function for hidden layers
+		std::string outputs_activation; //Activation function function for outputs
+		const std::string DERIVATIVE;
+
 		bool is_trained;
 };
 
-NeuralNetwork::NeuralNetwork(std::vector<int> no_of_layers){
+NeuralNetwork::NeuralNetwork(std::vector<int> no_of_layers): DERIVATIVE("_derivative"){
+	srand (time(NULL));
 	this->no_of_samples=1;	//Stochastic Gradient Descent is used i.e batch size=1
 	this->no_of_features=0;
 	this->hidden_layers_vector=no_of_layers;
@@ -59,6 +74,8 @@ void NeuralNetwork::Train(Matrix<double> X_train, Matrix<double> Y_train, double
 							std::string h_Layer_Activation, std::string output_Layer_Activation){
 
 	this->alpha=alpha;
+	this->hidden_layers_Activation=h_Layer_Activation;
+	this->outputs_activation=output_Layer_Activation;
 	this->no_of_features=X_train.get_Column();
 
 	//Initiaizing Hidden Layer Matrices
@@ -100,8 +117,8 @@ void NeuralNetwork::initialize_Parameters(){
 void NeuralNetwork::forward_Propagation(){
 	//this->hidden_layers[0].print();
 	for(int i=1; i<this->no_of_hidden_layers+1; i++){
-		i!=this->no_of_hidden_layers? this->hidden_layers[i]=Activation_Function(relu, (this->Weights[i-1]*this->hidden_layers[i-1])+this->Biases[i-1]):
-			this->hidden_layers[i]=Activation_Function(sigmoid, (this->Weights[i-1]*this->hidden_layers[i-1])+this->Biases[i-1]);
+		this->hidden_layers[i]=(i!=this->no_of_hidden_layers)?Activation_Function(hidden_layers_Activation, (this->Weights[i-1]*this->hidden_layers[i-1])+this->Biases[i-1]):
+			this->hidden_layers[i]=Activation_Function(outputs_activation, (this->Weights[i-1]*this->hidden_layers[i-1])+this->Biases[i-1]);
 		//this->hidden_layers[i].print();
 	}
 }
@@ -116,40 +133,36 @@ void NeuralNetwork::backward_Propagation(){
 	this->layers_error.resize(this->no_of_hidden_layers);
 	this->Weight_gradient.resize(this->no_of_hidden_layers);
 	this->Bias_gradient.resize(this->no_of_hidden_layers);
-
+	
 	//computing errors at each layers
 	for (int i=this->no_of_hidden_layers-1; i>=0; i--){
-		std::cout<<"("<<quadratic_Cost_derivative(this->true_Output, this->hidden_layers[no_of_hidden_layers]).get_Row()<<"X"<<
-		quadratic_Cost_derivative(this->true_Output, this->hidden_layers[no_of_hidden_layers]).get_Column()<<") and ("<<
-		Activation_Function(relu_derivative, (this->Weights[i]*this->hidden_layers[i])+this->Biases[i]).get_Row()<<"X"<<
-		Activation_Function(relu_derivative, (this->Weights[i]*this->hidden_layers[i])+this->Biases[i]).get_Column()<<")"<<std::endl;
-
-		//Problem Here
+		//errors at each layers computation
 		this->layers_error[i].resize(this->hidden_layers_vector[i], this->no_of_samples);
 		this->layers_error[i]=(i==(this->no_of_hidden_layers-1))? quadratic_Cost_derivative(this->true_Output, this->hidden_layers[no_of_hidden_layers]).hadamard_Product(
-							Activation_Function(sigmoid_derivative, (this->Weights[i]*this->hidden_layers[i])+this->Biases[i])): 
-							quadratic_Cost_derivative(this->true_Output, this->hidden_layers[no_of_hidden_layers]).hadamard_Product(
-							Activation_Function(relu_derivative, (this->Weights[i]*this->hidden_layers[i])+this->Biases[i]));
+							Activation_Function(outputs_activation+DERIVATIVE, (this->Weights[i]*this->hidden_layers[i])+this->Biases[i])): 
+							(this->Weights[i+1].Transpose()*this->layers_error[i+1]).hadamard_Product(
+							Activation_Function(hidden_layers_Activation+DERIVATIVE, (this->Weights[i]*this->hidden_layers[i])+this->Biases[i]));
 
+		//gradient of weights computation
 		i==0? this->Weight_gradient[i].resize(this->hidden_layers_vector[i], this->no_of_features):	
 			this->Weight_gradient[i].resize(this->hidden_layers_vector[i], this->hidden_layers_vector[i]); 
 		this->Weight_gradient[i]=this->layers_error[i]*this->hidden_layers[i].Transpose();
 
+		//gradients of Biases computation
 		this->Bias_gradient[i].resize(this->hidden_layers_vector[i], this->no_of_samples);
 		this->Bias_gradient[i]=this->layers_error[i];
 
+		//Updating Weight and Bias
 		this->Weights[i]=this->Weights[i]-(this->Weight_gradient[i]*this->alpha);
 		this->Biases[i]=this->Biases[i]-(this->Bias_gradient[i]*this->alpha);
-
-		this->Weights[i].print();
-		std::cout<<".....weight"<<i<<" after Optimization......."<<std::endl;
-		this->Biases[i].print();
-		std::cout<<".....bias"<<i<<" after Optimization......."<<std::endl;
-	}						
-	
+	}					
 }
 
 Matrix<double> NeuralNetwork::Predict(Matrix<double> X_test){
+	/*for(int i=0; i<this->no_of_hidden_layers+1; i++){
+		this->hidden_layers[i].print();
+	}*/
+
 	this->hidden_layers[0]=X_test.Transpose();
 	forward_Propagation();
 	return this->hidden_layers[no_of_hidden_layers];
