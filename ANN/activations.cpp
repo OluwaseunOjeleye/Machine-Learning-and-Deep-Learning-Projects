@@ -1,7 +1,7 @@
 #include "include/activations.h"
 
 double sigmoid(const double param){
-	return 1/(1+exp(-param));
+	return 1/(1.0+exp(-param));
 }
 
 double sigmoid_derivative(const double param){
@@ -16,13 +16,23 @@ double relu_derivative(const double param){
 	return (param<=0? 0: 1);
 }
 
+double tan_h(const double param){
+    return (1.0-exp(-2*param))/(1.0+exp(-2*param));
+}
+
+double tanh_derivative(const double param){
+    return (1+param)*(1-param);
+}
+
 Matrix<double> Activation_Function(const std::string &string, const Matrix<double> &matrix){
 	std::map<std::string, std::function<double(double)>> func_type=
     {
     	{ "sigmoid", sigmoid},
     	{"sigmoid_derivative", sigmoid_derivative},
     	{"relu", relu},
-    	{"relu_derivative", relu_derivative}
+    	{"relu_derivative", relu_derivative},
+    	{"tanh", tan_h},
+    	{"tanh_derivative", tanh_derivative}
     };
 
     Matrix<double> Result(matrix.get_Row(), matrix.get_Column());

@@ -1,6 +1,6 @@
 #ifndef COST_H_
 #define COST_H_
-#include "matrix.h"
+#include "matrix/matrix.h"
 
 //computing cost
 template <class R> 

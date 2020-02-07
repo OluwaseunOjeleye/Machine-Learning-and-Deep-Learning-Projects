@@ -1,0 +1,66 @@
+Hidden Layer 1
+2
+Hidden Layer 2
+3
+Hidden Layer 3
+2
+Hidden Layer 4
+1
+
+Hidden Layers Activation Function:
+sigmoid
+
+Output Layer Activation Function:
+sigmoid
+
+Learning Rate:
+0.7
+
+Weight 1
+2
+2
+-2.21343 -2.33974 
+2.38211 2.25018 
+
+Weight 2
+3
+2
+4.05498 -3.47669 
+-1.51111 1.38342 
+2.95317 -3.44651 
+
+Weight 3
+2
+3
+1.70772 -0.61403 1.71326 
+-4.99727 2.6417 -3.95393 
+
+Weight 4
+1
+2
+-4.05737 9.83881 
+
+Bias 1
+2
+1
+2.9836 
+-3.05242 
+
+Bias 2
+3
+1
+0.0225934 
+0.0910383 
+0.40611 
+
+Bias 3
+2
+1
+-0.568993 
+2.48456 
+
+Bias 4
+1
+1
+-2.54326 
+
