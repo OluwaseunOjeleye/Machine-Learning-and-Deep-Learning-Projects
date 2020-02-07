@@ -1,10 +1,10 @@
 ##To make file type make
 CC = g++
-CFLAGS = -g -Wall -Iinclude
+CFLAGS = -g
 
-HEADER = include/matrix.h include/activations.h include/cost.h include/NeuralNetwork.h
+HEADER = include/matrix/matrix.h include/activations.h include/cost.h include/NeuralNetwork.h
 
-SRCS= activations.cpp cost.cpp main.cpp
+SRCS= activations.cpp cost.cpp NeuralNetwork.cpp main.cpp
 
 OBJS = $(SRCS:.c++=.o)
 
