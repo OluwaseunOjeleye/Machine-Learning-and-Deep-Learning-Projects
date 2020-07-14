@@ -2,6 +2,10 @@
 
 Implementation of neural network in C++ using matrices. This implementation is meant to be used for learning about neural networks and deep learning.
 
+<p align="center">
+  <img src="include/ANN.png" title="ANN" alt="ANN">
+</p>
+
 ## Getting Started
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
