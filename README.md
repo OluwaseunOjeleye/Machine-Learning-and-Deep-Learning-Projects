@@ -16,7 +16,7 @@ Algorithms implemented from scratch till date:
 
 6. **[Logistic Regression](https://github.com/OluwaseunOjeleye/Machine-Learning-and-Deep-Learning/tree/master/Logistic%20Regression)**: implemented with Python.
 
-The machine learning algorithms implementations were used to work on machine learning projects such as:
+The machine learning algorithms' implementations were used to work on machine learning projects such as:
 
 1. Iris flowers classification
 
