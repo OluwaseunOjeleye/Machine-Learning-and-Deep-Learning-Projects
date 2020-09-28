@@ -1,6 +1,6 @@
 # Neural Network in C++
 
-Implementation of neural network in C++ using matrices. This implementation is meant to be used for learning about neural networks and deep learning.
+Implementation of neural network in C++ using [matrices](https://github.com/OluwaseunOjeleye/Machine-Learning-and-Deep-Learning/tree/master/ANN/include/matrix). This implementation is meant to be used for learning about neural networks and deep learning.
 
 <p align="center">
   <img src="include/ANN.png" title="ANN" alt="ANN">
